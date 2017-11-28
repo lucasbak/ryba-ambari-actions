@@ -1,0 +1,23 @@
+{
+  "name": "ryba-ambari-actions",
+  "version": "0.0.1",
+  "description": "gather actions to communicate with ambari rest api",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "coffee -b -o lib src",
+    "test": "NODE_ENV=test mocha "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucasbak/ryba-ambari-actions.git"
+  },
+  "author": "Lucas BAKALIAN",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lucasbak/ryba-ambari-actions/issues"
+  },
+  "homepage": "https://github.com/lucasbak/ryba-ambari-actions#readme",
+  "dependencies": {
+    "coffeescript": "^2.0.2"
+  }
+}
