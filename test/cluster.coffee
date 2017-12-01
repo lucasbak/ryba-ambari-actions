@@ -2,7 +2,7 @@
   config = require '../config'
   cluster_add = require '../src/cluster/add'
   cluster_delete = require '../src/cluster/delete'
-  persist = require '../src/persist'
+  persist = require '../src/cluster/persist'
   nikita = require('nikita')()
 
   

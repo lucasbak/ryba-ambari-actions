@@ -19,18 +19,19 @@ The node should already exist in ambari.
 
 ```js
 nikita
-.cluster_add({
+.cluster.node_add({
   "username": 'ambari_admin',
   "password": 'ambari_secret',
   "url": "http://ambari.server.com",
-  "name": 'my_cluster'
-  "version": 'HDP-2.5.3'
+  "cluster_name": 'my_cluster'
+  "hostname": 'server1.server.com'
   }
 }, function(err, status){
-  console.log( err ? err.message : "Policy Created: " + status)
+  console.log( err ? err.message : "Node Added To Cluster: " + status)
 })
 ```
-#Handles: POST
+
+## Source Code
 
     module.exports = (options, callback) ->
       error = null

@@ -17,19 +17,19 @@ Create a cluster using the [REST API v2](https://github.com/apache/ambari/blob/t
 ## Exemple
 
 ```js
-nikita
-.cluster_add({
+cluster.node_delete({
   "username": 'ambari_admin',
   "password": 'ambari_secret',
   "url": "http://ambari.server.com",
-  "name": 'my_cluster'
-  "version": 'HDP-2.5.3'
+  "cluster_name": 'my_cluster'
+  "hostname": 'server1.server.com'
   }
 }, function(err, status){
-  console.log( err ? err.message : "Policy Created: " + status)
+  console.log( err ? err.message : "Node Deleted From Cluster: " + status)
 })
 ```
-#Handles: DELETE
+
+## Source Code
 
     module.exports = (options, callback) ->
       error = null

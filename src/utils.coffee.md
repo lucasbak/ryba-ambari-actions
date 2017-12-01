@@ -9,12 +9,20 @@
           headers['Authorization'] ?= 'Basic ' + new Buffer(options.username + ':' + options.password).toString('base64');
         headers
       doRequestWithOptions: (options, callback) ->
-        throw Error 'Missin hostname' unless options.hostname?
-        throw Error 'Missing port' unless options.port?
-        throw Error 'Missing method' unless options.method?
-        throw Error 'Invalid method' unless options.method in ['GET','POST','PUT','DELETE']
-        throw Error 'Mssing path' unless options.path?
-        if callback?
+        error = null
+        statusCode = null
+        response = null
+        error = Error 'Missin hostname' unless options.hostname?
+        error = Error 'Missing port' unless options.port?
+        error = Error 'Missing method' unless options.method?
+        error = Error 'Invalid method' unless options.method in ['GET','POST','PUT','DELETE']
+        error = Error 'Mssing path' unless options.path?
+        do_end = ->
+          callback error, statusCode, response if callback?
+          new Promise (fullfil, reject) ->
+            reject error if error?
+            fullfil statusCode, response
+        do_request = ->
           try
             opts = {
               hostname: options.hostname
@@ -32,74 +40,43 @@
             if options.json
               opts.headers['Content-Type'] ?= 'application/json'
             if options.content?
-              opts.headers['Content-Length'] ?= options.content.length
+              if typeof options.content is 'string'
+                opts.headers['Content-Length'] ?= options.content.length
             http_maker = if options.sslEnabled then https else http
-            console.log opts
             request = http_maker.request opts, (res) ->
               res.on 'data', (data) -> response_object+= data
               res.on 'end', ->
                 try
-                  console.log response_object
                   response_object = JSON.parse response_object if options.json
                   error = null
                   # if res.statusCode not in [200,201]
                   #   response_object = JSON.parse response_object
                   #   error = Error "Error: #{response_object.message}" 
-                  return callback error, res.statusCode, response_object
+                  statusCode  = res.statusCode
+                  response = response_object
+                  do_end()
                 catch err
-                  return callback err
-              res.on 'error', (error) -> callback error
+                  error = err
+                  do_end()
+              res.on 'error', (err) ->
+                error  = err
+                do_end()
             if options.content?
-              request.on 'error', (error ) -> return callback error
+              request.on 'error', (err) ->
+                error = err
+                do_end()
               request.write options.content
               request.end()
             else
-              request.on 'error', (error) ->
-                return callback error
+              request.on 'error', (err) ->
+                error = err
+                do_end()
               request.end()
           catch err
-            return callback err
-        else
-          new Promise (fullfil, reject) ->
-            try
-              opts = {
-                hostname: options.hostname
-                port: options.port
-                path: options.path
-                method: options.method
-                }
-              response_object = ''
-              #ssl
-              if options.sslEnabled
-                opts['rejectUnauthorized'] = options.rejectUnauthorized
-              #headers
-              opts.headers ?= {}
-              if options.json
-                opts.headers['Content-Type'] ?= 'application/json'
-              if options.content
-                opts.headers['Content-Length'] ?= options.content.length
-              http_maker = if options.sslEnabled then https else http
-              request = http_maker.request opts, (res) ->
-                res.on 'data', (data) -> response_object+= data;
-                res.on 'end', ->
-                  try
-                    response_object = JSON.parse response_object if options.json
-                    fullfil res.statusCode, response_object
-                  catch err
-                    reject err
-                res.on 'error', (error) ->
-                  reject error
-              if options.content?
-                request.on 'error', (error ) -> return reject error
-                request.write options.content
-                request.end()
-              else
-                request.on 'error', (error ) ->
-                  reject error
-                request.end()
-            catch err
-              reject err
-
+            error = err
+            do_end()
+        do_request()
+      
 
 ## Dependencies
 

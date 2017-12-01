@@ -18,7 +18,7 @@ Create a cluster using the [REST API v2](https://github.com/apache/ambari/blob/t
 
 ```js
 nikita
-.cluster_add({
+.cluster.add({
   "username": 'ambari_admin',
   "password": 'ambari_secret',
   "url": "http://ambari.server.com",
@@ -29,7 +29,8 @@ nikita
   console.log( err ? err.message : "Policy Created: " + status)
 })
 ```
-#Handles: PUT
+
+## Source Code
 
     module.exports = (options, callback) ->
       error = null

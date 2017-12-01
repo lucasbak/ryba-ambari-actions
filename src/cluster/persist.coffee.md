@@ -15,26 +15,24 @@ Persist Ambari Cluster resource using the [REST API v2](https://github.com/apach
 ## Exemple
 
 ```js
-nikita
-.cluster_add({
+.cluster.persist({
   "username": 'ambari_admin',
   "password": 'ambari_secret',
   "url": "http://ambari.server.com",
-  "name": 'my_cluster'
-  "version": 'HDP-2.5.3'
+  "cluster_name": 'my_cluster'
   }
 }, function(err, status){
-  console.log( err ? err.message : "Policy Created: " + status)
+  console.log( err ? err.message : "Node Added To Cluster: " + status)
 })
 ```
-#Handles: PUT
+
+## Source Code
 
     module.exports = (options, callback) ->
       error = null
       status = false
       options.debug ?= false
       do_end = ->
-        console.log error, status, callback?
         return callback error, status if callback?
         new Promise (fullfil, reject) ->
           reject error if error?
@@ -72,4 +70,4 @@ nikita
 
 ## Depencendies
 
-    utils = require './utils'
+    utils = require '../utils'

@@ -19,18 +19,18 @@ if host
 
 ```js
 nikita
-.cluster_add({
+.cluster.add({
   "username": 'ambari_admin',
   "password": 'ambari_secret',
   "url": "http://ambari.server.com",
-  "name": 'my_cluster'
-  "version": 'HDP-2.5.3'
+  "hostname": 'master1.server.com'
   }
 }, function(err, status){
   console.log( err ? err.message : "Policy Created: " + status)
 })
 ```
-#Handles: POST
+
+## Source Code
 
     module.exports = (options, callback) ->
       error = null
