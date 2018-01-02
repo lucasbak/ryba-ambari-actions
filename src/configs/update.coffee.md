@@ -21,6 +21,8 @@ Updates ambari named config using the [REST API v2](https://github.com/apache/am
   the current tag of the config_type, will read from ambari's server if not provided.
 * `description` (string)   
   a note describing what modifications user provides
+* `merge` (boolean)
+Read properties for the current version (if exists) and merge properties. true by default.
 
 ## Exemple
 
@@ -37,11 +39,13 @@ configs.update({
 })
 ```
 
+## Source Code
 
     module.exports = (options, callback) ->
       error = null
       differences = false
       options.debug ?= false
+      options.merge ?= true
       do_end = ->
         return callback error, differences if callback?
         new Promise (fullfil, reject) ->
@@ -54,6 +58,7 @@ configs.update({
         throw Error 'Required Options: cluster_name' unless options.cluster_name
         throw Error 'Required Options: config_type' unless options.config_type
         throw Error 'Required Options: source or properties' unless options.source or options.properties
+        throw Error 'Source and properties can not be specified simultaneously' if options.source and options.properties
         [hostname,port] = options.url.split("://")[1].split(':')
         options.sslEnabled ?= options.url.split('://')[0] is 'https'
         path = "/api/v1/clusters/#{options.cluster_name}"
@@ -79,17 +84,21 @@ configs.update({
               # note each configuration has two files tag and version
               # the tag is a string while the version the id as an integer
               # this id will be used to get the latest version
+              console.log "stack_version #{options.stack_version}, cluster_name #{options.cluster_name}" if options.debug
               if desired_configs[options.config_type]?
                 options.current_version = desired_configs[options.config_type].version
                 options.current_tag = desired_configs[options.config_type].tag
+                options.config_version ?= parseInt(options.current_version)+1
+                options.tag ?= "version#{options.config_version}"
                 return do_diff()
               options.tag ?= 'version1'
-              options.version = 1
+              options.config_version = 1
               do_update()
             catch err
               error = err
               do_end()
         do_diff = ->
+          console.log "computing diff ambari.configs.update" if options.debug
           # do diff with the current config tag
           opts.path = "#{path}/configurations?type=#{options.config_type}&tag=#{options.current_tag}"
           opts['method'] = 'GET'
@@ -101,6 +110,9 @@ configs.update({
               current_configs = response['items'].filter( (item) -> item.version is options.current_version)
               throw Error "No config found for version #{options.current_version}" unless current_configs.length is 1
               current_properties = current_configs[0].properties
+              if options.merge
+                options.properties = merge {}, current_properties, options.properties
+              #return do_update()
               for prop, value of options.properties
                 if "#{current_properties[prop]}" isnt "#{value}"
                   differences = differences||true
@@ -111,10 +123,10 @@ configs.update({
               do_end()
         do_update = ->
           try
-            console.log "update #{options.config_type} with tag: #{options.tag} version:#{options.version}" if options.debug
+            console.log "update #{options.config_type} with tag: #{options.tag} version:#{options.config_version}" if options.debug
             options.description ?= "updated config #{options.config_type}"
-            options.version = parseInt(options.current_version)+1
-            options.tag ?= "version#{options.version}"
+            options.config_version = parseInt(options.current_version)+1
+            options.tag ?= "version#{options.config_version}"
             differences = true
             opts.content ?= options.content ?= JSON.stringify [
                 Clusters:
@@ -150,5 +162,4 @@ configs.update({
 
     utils = require '../utils'
     path = require 'path'
-    
-  
+    {merge} = require 'nikita/lib/misc'
