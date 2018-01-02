@@ -6,9 +6,9 @@
   update = require '../src/configs/update'
   nikita = require('nikita')()
 
-  
-  describe 'cluster', ->
-      
+
+  describe 'configs actions', ->
+
     it 'error no cluster name', (done) ->
       options = Object.assign {}, config.options
       options.config_type = 'hdfs-site'
@@ -93,6 +93,7 @@
       options.cluster_name = options.name = 'ryba_test'
       options.version = 'HDP-2.5'
       options.config_type = 'hdfs-site'
+      options.debug = true
       options.properties =
         'dfs.nameservices': 'ryba_test'
       nikita
@@ -118,7 +119,7 @@
       options.properties =
         'dfs.nameservices': 'ryba_test'
       options.tag = 'versionOne'
-      options_diff = Object.assign {}, options, properties: 'dfs.nameservices': 'ryba_cluster'
+      options_diff = Object.assign {}, options, properties: 'dfs.nameservices': 'ryba_cluster', version: null
       nikita
       .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
@@ -132,26 +133,23 @@
       .then (err) ->
         err.message.should.eql "org.apache.ambari.server.controller.spi.SystemException: An internal system exception occurred: Configuration with tag 'versionOne' exists for 'hdfs-site'"
 
-    # it 'get config with tag (nikita)', ->
-    #   options = Object.assign {}, config.options
-    #   options.cluster_name = options.name = 'ryba_test'
-    #   options.version = 'HDP-2.5'
-    #   options.config_type = 'hdfs-site'
-    #   options.tag = 'version1'
-    #   options.properties =
-    #     'dfs.nameservices': 'ryba_test'
-    #   nikita
-    #   .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
-    #   .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
-    #   .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"
-    #   .registry.register ['ambari', 'configs', 'update'], "#{__dirname}/../src/configs/update"
-    #   .registry.register ['ambari', 'configs', 'read'], "#{__dirname}/../src/configs/get"
-    #   .ambari.cluster.delete options
-    #   .ambari.cluster.add options
-    #   .ambari.cluster.persist options
-    #   .ambari.configs.update options
-    #   .ambari.configs.read options
-    #   , (err, status, props)  ->
-    #     props.should.eql 'dfs.nameservices': 'ryba_test'
-    #   .then (err) ->
-    #     throw err if err?
+    it 'post config without from source tag (nikita)', ->
+      options = Object.assign {}, config.options
+      options.cluster_name = options.name = 'ryba_test'
+      options.version = 'HDP-2.5'
+      options.config_type = 'hdfs-site'
+      options.properties =
+        'dfs.nameservices': 'ryba_test'
+      nikita
+      .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
+      .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
+      .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"
+      .registry.register ['ambari', 'configs', 'update'], "#{__dirname}/../src/configs/update"
+      .ambari.cluster.delete options
+      .ambari.cluster.add options
+      .ambari.cluster.persist options
+      .ambari.configs.update options
+      , (err, status) ->
+        status.should.be.true()
+      .then (err) ->
+        throw err if err?

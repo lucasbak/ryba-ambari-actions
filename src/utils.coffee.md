@@ -2,7 +2,7 @@
 
     module.exports =
       headers: (options) ->
-        headers = 
+        headers =
           'X-Requested-By': 'ambari'
           "cache-control": "no-cache"
         if options.username and options.password
@@ -51,7 +51,7 @@
                   error = null
                   # if res.statusCode not in [200,201]
                   #   response_object = JSON.parse response_object
-                  #   error = Error "Error: #{response_object.message}" 
+                  #   error = Error "Error: #{response_object.message}"
                   statusCode  = res.statusCode
                   response = response_object
                   do_end()
@@ -76,7 +76,7 @@
             error = err
             do_end()
         do_request()
-      
+
 
 ## Dependencies
 
