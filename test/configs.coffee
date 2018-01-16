@@ -2,6 +2,7 @@
   config = require '../config'
   cluster_add = require '../src/cluster/add'
   cluster_delete = require '../src/cluster/delete'
+  group_add = require '../src/configs/groups/add'
   persist = require '../src/cluster/persist'
   update = require '../src/configs/update'
   nikita = require('nikita')()
@@ -153,3 +154,46 @@
         status.should.be.true()
       .then (err) ->
         throw err if err?
+    it.only 'create config groups without hosts (nikita)', (done) ->
+      options = Object.assign {}, config.options
+      options.tag = "config_group_test"
+      options.cluster_name = options.name = 'ryba_test'
+      options.version = 'HDP-2.5'
+      options.group_name = 'advanced_zookeeper'
+      options.desired_configs =
+        type: 'zoo.cfg'
+        tag: 'slow_zookeeper'
+        properties: 'tickTime': '5000'
+      options.hosts = []
+      # options.debug = true
+      nikita
+      .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
+      .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
+      .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"
+      .registry.register ['ambari', 'configs', 'update'], "#{__dirname}/../src/configs/update"
+      .registry.register ['ambari', 'configs', 'groups', 'add'], "#{__dirname}/../src/configs/groups/add"
+      .registry.register ['ambari', 'configs', 'groups', 'delete'], "#{__dirname}/../src/configs/groups/delete"
+      .ambari.cluster.delete options
+      .ambari.cluster.add options
+      .ambari.cluster.persist options
+      .ambari.configs.groups.delete options
+      .ambari.configs.groups.add options
+      , (err, status) ->
+        status.should.be.true()
+      .next (err) ->
+        done err
+      # .next (err) ->
+      #   done err
+      # group_add options, (err, status) ->
+      #   console.log err, status
+      # nikita
+      # .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
+      # .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
+      # .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"
+      # .registry.register ['ambari', 'configs', 'groups', 'add'], "#{__dirname}/../src/configs/groups/add"
+      # .ambari.cluster.delete options
+      # .ambari.cluster.add options
+      # .ambari.configs.groups.add options
+      # .next (err) ->
+      #   console.log err
+      #   err.should.be.null()
