@@ -45,7 +45,7 @@
       nikita
       .registry.register ['ambari', 'configs', 'update'], "#{__dirname}/../src/configs/update"
       .ambari.configs.update options
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Required Options: cluster_name'
 
     it 'error no config name (nikita)', ->
@@ -56,7 +56,7 @@
       nikita
       .registry.register ['ambari', 'configs', 'update'], "#{__dirname}/../src/configs/update"
       .ambari.configs.update options
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Required Options: config_type'
 
     it 'error no properties (nikita)', ->
@@ -97,7 +97,7 @@
       .ambari.services.add services_add
       , (err, status) ->
         status.should.be.true()
-      .then (err) ->
+      .next (err) ->
         throw err if err?
 
     it 'post service zookeeper already exist (nikita)', ->
@@ -129,7 +129,7 @@
       .ambari.services.add services_add
       , (err, status) ->
         status.should.be.false()
-      .then (err) ->
+      .next (err) ->
         throw err if err?
 
     it 'delete service zookeeper exist (nikita)', ->
@@ -162,7 +162,7 @@
       .ambari.services.delete services_add
       , (err, status) ->
         status.should.be.true()
-      .then (err) ->
+      .next (err) ->
         throw err if err?
 
     it 'delete service zookeeper not exist (nikita)', ->
@@ -194,7 +194,7 @@
       .ambari.services.delete services_add
       , (err, status) ->
         status.should.be.false()
-      .then (err) ->
+      .next (err) ->
         throw err if err?
 
     it 'post  component zookeeper_server (nikita)', ->
@@ -229,5 +229,5 @@
       .ambari.services.component_add options
       , (err, status) ->
         status.should.be.true()
-      .then (err) ->
+      .next (err) ->
         throw err if err?

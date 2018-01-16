@@ -38,5 +38,5 @@
       .ambari.stacks.repository_add options
       , (err, status) ->
         status.should.be.true()
-      .then (err) ->
+      .next (err) ->
         throw err if err?

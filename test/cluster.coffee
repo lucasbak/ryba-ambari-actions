@@ -6,7 +6,7 @@
   nikita = require('nikita')()
 
   
-  describe 'cluster', ->
+  describe 'cluster actions', ->
       
     it 'error if no name', (done) ->
       options = Object.assign {}, config.options
@@ -26,7 +26,7 @@
       nikita
       .registry.register ['ambari', 'cluster_add'], "#{__dirname}/../src/cluster/add"
       .ambari.cluster_add options
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Required Options: name'
 
     it 'error if no version (nikita)', ->
@@ -35,7 +35,7 @@
       nikita
       .registry.register ['ambari', 'cluster_add'], "#{__dirname}/../src/cluster/add"
       .ambari.cluster_add options
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Required Options: version'
 
 
@@ -156,7 +156,7 @@
       .registry.register ['ambari', 'cluster_delete'], "#{__dirname}/../src/cluster/delete"
       .ambari.cluster_delete options
       .ambari.cluster_add options
-      .then (err) ->
+      .next (err) ->
         return done err if err
         persist options, (err, status) ->
           return done err if err

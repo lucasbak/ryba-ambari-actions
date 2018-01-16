@@ -44,7 +44,7 @@
       nikita
       .registry.register ['ambari', 'configs', 'update'], "#{__dirname}/../src/configs/update"
       .ambari.configs.update options
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Required Options: cluster_name'
 
     it 'error no config name (nikita)', ->
@@ -55,7 +55,7 @@
       nikita
       .registry.register ['ambari', 'configs', 'update'], "#{__dirname}/../src/configs/update"
       .ambari.configs.update options
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Required Options: config_type'
 
     it 'error no properties (nikita)', ->
@@ -86,7 +86,7 @@
       .ambari.configs.update options
       , (err, status) ->
         status.should.be.true()
-      .then (err) ->
+      .next (err) ->
         throw err if err?
 
     it 'post config without tag no diffs (nikita)', ->
@@ -109,7 +109,7 @@
       .ambari.configs.update options
       , (err, status) ->
         status.should.be.false()
-      .then (err) ->
+      .next (err) ->
         throw err if err?
 
     it 'post config with tag (nikita)', ->
@@ -131,7 +131,7 @@
       .ambari.cluster.persist options
       .ambari.configs.update options
       .ambari.configs.update options_diff
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql "org.apache.ambari.server.controller.spi.SystemException: An internal system exception occurred: Configuration with tag 'versionOne' exists for 'hdfs-site'"
 
     it 'post config without from source tag (nikita)', ->
@@ -152,8 +152,9 @@
       .ambari.configs.update options
       , (err, status) ->
         status.should.be.true()
-      .then (err) ->
+      .next (err) ->
         throw err if err?
+        
     it.only 'create config groups without hosts (nikita)', (done) ->
       options = Object.assign {}, config.options
       options.tag = "config_group_test"

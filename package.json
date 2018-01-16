@@ -18,6 +18,9 @@
   },
   "homepage": "https://github.com/lucasbak/ryba-ambari-actions#readme",
   "dependencies": {
-    "coffeescript": "^2.0.2"
+    "coffeescript": "^2.0.2",
+    "mocha": "^4.1.0",
+    "nikita": "~0.6.3",
+    "should": "^13.2.1"
   }
 }
