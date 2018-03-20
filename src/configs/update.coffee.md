@@ -59,6 +59,12 @@ configs.update({
         throw Error 'Required Options: config_type' unless options.config_type
         throw Error 'Required Options: source or properties' unless options.source or options.properties
         throw Error 'Source and properties can not be specified simultaneously' if options.source and options.properties
+        #clean properties
+        for prop, val of options.properties
+          delete options.properties[prop] if val is null
+        for prop, value of options.properties
+          if Array.isArray value
+            options.properties[prop] = value.join(',')
         [hostname,port] = options.url.split("://")[1].split(':')
         options.sslEnabled ?= options.url.split('://')[0] is 'https'
         path = "/api/v1/clusters/#{options.cluster_name}"
@@ -101,6 +107,7 @@ configs.update({
           console.log "computing diff ambari.configs.update" if options.debug
           # do diff with the current config tag
           opts.path = "#{path}/configurations?type=#{options.config_type}&tag=#{options.current_tag}"
+          console.log "options.config_type #{options.config_type}, current_tag: #{options.current_tag}" if options.debug
           opts['method'] = 'GET'
           utils.doRequestWithOptions opts, (err, statusCode, response) ->
             try
@@ -109,7 +116,7 @@ configs.update({
               throw Error response.message if statusCode isnt 200
               current_configs = response['items'].filter( (item) -> item.version is options.current_version)
               throw Error "No config found for version #{options.current_version}" unless current_configs.length is 1
-              current_properties = current_configs[0].properties
+              current_properties = current_configs[0].properties ?= {}
               if options.merge
                 options.properties = merge {}, current_properties, options.properties
               #return do_update()
@@ -128,7 +135,7 @@ configs.update({
             options.config_version = parseInt(options.current_version)+1
             options.tag ?= "version#{options.config_version}"
             differences = true
-            opts.content ?= options.content ?= JSON.stringify [
+            opts.content = options.content = JSON.stringify [
                 Clusters:
                   desired_config: [
                     type: options.config_type
