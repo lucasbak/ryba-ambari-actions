@@ -38,6 +38,7 @@ nikita
       error = null
       status = false
       options.debug ?= false
+      options.repository_version ?= '1'
       do_end = ->
         return callback error, status if callback?
         new Promise (fullfil, reject) ->
@@ -68,6 +69,11 @@ nikita
             throw Error response.message if parseInt(statusCode) not in [200, 404]
             return do_end() if statusCode is 200
             opts['method'] = 'POST'
+            opts.content =
+              RequestInfo:
+                context: "Add Service #{options.name}"
+              Body: ServiceInfo: desired_repository_version_id: options.repository_version
+            opts.content = JSON.stringify opts.content
             utils.doRequestWithOptions opts, (err, statusCode, response) ->
               error =  err if err
               status = true
