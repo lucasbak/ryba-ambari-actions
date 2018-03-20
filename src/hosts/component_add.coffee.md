@@ -61,17 +61,29 @@ The node should already exist in ambari.
         opts['method'] = 'GET'
         opts.path = "#{path}/#{options.component_name}"
         utils.doRequestWithOptions opts, (err, statusCode, response) ->
-          throw err if err
-          response = JSON.parse response
-          if response?.status is 404
-            console.log "component_name #{options.component_name} not found in ambari server hosts.component_name" if options.debug
-            opts['method'] = 'POST'
-            utils.doRequestWithOptions opts, (err, statusCode, response) ->
-              throw err if err
-              status = true
+          try
+            throw err if err
+            response = JSON.parse response
+            if parseInt(statusCode) is 404
+              console.log "component_name #{options.component_name} not found in ambari server hosts.component_name" if options.debug
+              opts['method'] = 'POST'
+              utils.doRequestWithOptions opts, (err, statusCode, response) ->
+                try
+                  throw err if err
+                  if statusCode is 201
+                    status = true
+                    do_end()
+                  else
+                    response = JSON.parse response
+                    throw Error response.message
+                catch err
+                  error = err
+                  do_end()
+            else
+              status = false
               do_end()
-          else
-            status = false
+          catch err
+            error = err
             do_end()
       catch err
         error = err

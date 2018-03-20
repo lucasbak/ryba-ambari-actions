@@ -41,7 +41,6 @@ The node should already exist in ambari.
       requests = null
       options.debug ?= false
       do_end = ->
-        console.log error, status, requests
         return callback error, status, requests if callback?
         new Promise (fullfil, reject) ->
           reject error if error?
@@ -75,7 +74,6 @@ The node should already exist in ambari.
             return do_end() if hostroles.desired_state in ['INSTALLED']
             opts['method'] = 'PUT'
             opts.content = JSON.stringify options.properties
-            console.log opts
             utils.doRequestWithOptions opts, (err, statusCode, response) ->
               try
                 throw err if err
