@@ -20,7 +20,7 @@ Create ambari config groups [REST API v2](https://github.com/apache/ambari/blob/
   Tha tag is wht identified uniquely on admin side the config groups
 * `hosts` (string|array)   
   hosts which should belong to config group.
-* `desired_configs` (object|array)   
+* `desired_configs` (object)   
   The object describing files types and properties.
   the key is the configuration_type, value are the properties.
 
@@ -74,6 +74,7 @@ Hosts can be empty as the config group can be uptade with a later PUT request.
         throw Error 'Required Options: desired_configs' unless options.desired_configs
         options.desired_configs = [options.desired_configs] unless Array.isArray options.desired_configs 
         options.hosts ?= []
+        options.hosts = [options.hosts] unless Array.isArray options.hosts
         options.description ?= "config group cluster: #{options.cluster_name} group #{options.group_name}"
         [hostname,port] = options.url.split("://")[1].split(':')
         options.sslEnabled ?= options.url.split('://')[0] is 'https'
@@ -88,36 +89,75 @@ Hosts can be empty as the config group can be uptade with a later PUT request.
         #check desired_configs keys
         for config in options.desired_configs
           for k, v of config
-            throw Error Missing "config.type" unless config.type
-            throw Error Missing "config.tag" unless config.tag
-            throw Error Missing "config.properties" unless config.properties
-        opts['method'] = 'POST'
+            throw Error "Missing config.type" unless config.type
+            throw Error "Missing config.tag" unless config.tag
+            throw Error "Missing config.properties" unless config.properties
+            for name, value of config.properties
+              config.properties[name] = value.join(',') if Array.isArray value
+
+## Get Config Group Item
+get groupname and tag at index i to check if matches options.tag and options.group_name
+
+        do_get_config_group_item = (index, configs) ->
+          config = configs[index]
+          opts['method'] = 'GET'
+          opts.path = config.href
+          utils.doRequestWithOptions opts, (err, statusCode, response) ->
+            try
+              throw err if err
+              response = JSON.parse response
+              throw response.message unless parseInt(statusCode) is 200
+              return do_end() if (response.ConfigGroup.group_name is options.group_name) and (response.ConfigGroup.tag is options.tag)
+              ## check if the index is the arrya's length (meaning that allitems have been checked)
+              index = index + 1
+              if index is configs.length
+                do_post_config_group()
+              else
+                do_get_config_group_item(index, configs)
+            catch err
+              error = err
+              do_end()
+        do_post_config_group = ->
+          opts['method'] = 'POST'
+          opts.path = "#{path}/config_groups"
+          newConfigGroup =
+            ConfigGroup: 
+              cluster_name: options.cluster_name
+              group_name: options.group_name
+              tag: options.tag
+              description: options.description
+              hosts: options.hosts.map (host) -> host_name: host
+              desired_configs: options.desired_configs
+          opts.content = JSON.stringify newConfigGroup
+          process.stdout.write "config.grous.add: post configGroup #{options.group_name}\n" if options.debug
+          # opts.json = true
+          utils.doRequestWithOptions opts, (err, statusCode, response) ->
+            try
+              console.log parseInt(statusCode)
+              throw err if err
+              response = JSON.parse response
+              switch parseInt(statusCode)
+                when 201
+                  process.stdout.write "config.grous.add: created configGroup #{options.config_name}\n" if options.debug
+                  status = true
+                  return do_end()
+                when 409
+                  status = false
+                  return do_end()
+                else
+                  throw Error response.message
+            catch err
+              error = err
+              do_end()
+        opts['method'] = 'GET'
         opts.path = "#{path}/config_groups"
-        newConfigGroup =
-          ConfigGroup: 
-            cluster_name: options.cluster_name
-            group_name: options.group_name
-            tag: options.tag
-            description: options.description
-            hosts: options.hosts
-            desired_configs: options.desired_configs
-        opts.content = JSON.stringify newConfigGroup
-        process.stdout.write "config.grous.add: post configGroup #{options.group_name}\n" if options.debug
-        # opts.json = true
         utils.doRequestWithOptions opts, (err, statusCode, response) ->
           try
+            console.log parseInt(statusCode)
             throw err if err
             response = JSON.parse response
-            switch parseInt(statusCode)
-              when 201
-                process.stdout.write "config.grous.add: created configGroup #{options.config_name}\n" if options.debug
-                status = true
-                return do_end()
-              when 409
-                status = false
-                return do_end()
-              else
-                throw Error response.message
+            throw response.message unless parseInt(statusCode) is 200
+            if response.items.length is 0 then do_post_config_group() else  do_get_config_group_item( 0, response.items)
           catch err
             error = err
             do_end()

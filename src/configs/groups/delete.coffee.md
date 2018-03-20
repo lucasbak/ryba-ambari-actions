@@ -91,6 +91,8 @@ Hosts can be empty as the config group can be uptade with a later PUT request.
         path = "#{path}/config_groups"
         do_search_items = ->
           process.stdout.write "Search config groups item\n" if options.debug
+          #config groups are identified by id
+          # as a consequence need to compare group name and tag to delete if not id is provided
           search_item = (index, items) ->
             item = items[index]
             opts.path = "#{path}/#{item.ConfigGroup.id}"
@@ -112,6 +114,7 @@ Hosts can be empty as the config group can be uptade with a later PUT request.
                 do_end()
           opts.method = 'GET'
           opts.path = path
+          process.stdout.write "Searching items by id\n" if options.debug
           utils.doRequestWithOptions opts, (err, statusCode, response) ->
             try
               throw err if err
