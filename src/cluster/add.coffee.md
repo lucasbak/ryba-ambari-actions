@@ -13,6 +13,8 @@ Create a cluster using the [REST API v2](https://github.com/apache/ambari/blob/t
   Name of the cluster.
 * `version` (string)   
   Version of the cluster, required.
+* `security_type` (string)   
+  NONE or KERBEROS. default to NONE.
 
 ## Exemple
 
@@ -36,6 +38,7 @@ nikita
       error = null
       status = false
       options.debug ?= false
+      options.security_type ?= 'NONE'
       do_end = ->
         return callback error, status if callback?
         new Promise (fullfil, reject) ->
@@ -68,7 +71,9 @@ nikita
             opts.content ?=
               RequestInfo:
                 context: 'Create Cluster'
-              Body: Clusters: version: options.version
+              Body: Clusters:
+                version: options.version
+                security_type: options.security_type
             opts.content = JSON.stringify opts.content
             utils.doRequestWithOptions opts, (err, statusCode, response) ->
               throw err if err
