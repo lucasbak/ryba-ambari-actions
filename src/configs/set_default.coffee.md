@@ -63,11 +63,11 @@ configs.get_default({
           options.installed_services = [options.installed_services] unless Array.isArray options.installed_services
           for srv in options.installed_services
             throw Error "Unsupported service #{srv}" unless srv in [
-              'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2'
+              'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX'
             ]
         for srv in options.target_services
           throw Error "Unsupported service #{srv}" unless srv in [
-            'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2'
+            'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX'
           ]
         services = []
         services.push options.target_services...
@@ -108,9 +108,10 @@ configs.get_default({
                 #merge options bases on options.configurations object
                 if options.configurations?[config_type]?
                   for k,v of options.properties
-                    properties[k] = options.configurations[config_type][k]
+                    properties[k] = options.configurations[config_type][k] if options.configurations[config_type][k]?
                   for k,v of options.configurations[config_type]
-                    properties[k] = options.configurations[config_type][k]
+                    properties[k] = options.configurations[config_type][k] if options.configurations[config_type][k]?
+                console.log 'I DO UPDATE MOTHER FUCKER', config_type, options.properties if config_type is "spark-defaults"
                 action_config_update options, (err, done) ->
                   status = status || done
                   if err
