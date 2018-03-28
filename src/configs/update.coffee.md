@@ -90,12 +90,12 @@ configs.update({
               # note each configuration has two files tag and version
               # the tag is a string while the version the id as an integer
               # this id will be used to get the latest version
-              console.log "stack_version #{options.stack_version}, cluster_name #{options.cluster_name}" if options.debug
               if desired_configs[options.config_type]?
                 options.current_version = desired_configs[options.config_type].version
                 options.current_tag = desired_configs[options.config_type].tag
                 options.config_version ?= parseInt(options.current_version)+1
-                options.tag ?= "version#{options.config_version}"
+                options.new_version = parseInt(options.current_version)+1
+                options.new_tag = "version#{options.new_version}"
                 return do_diff()
               options.tag ?= 'version1'
               options.config_version = 1
@@ -132,8 +132,8 @@ configs.update({
           try
             console.log "update #{options.config_type} with tag: #{options.tag} version:#{options.config_version}" if options.debug
             options.description ?= "updated config #{options.config_type}"
-            options.config_version = parseInt(options.current_version)+1
-            options.tag ?= "version#{options.config_version}"
+            options.config_version = options.new_version
+            options.tag ?= options.new_tag
             differences = true
             opts.content = options.content = JSON.stringify [
                 Clusters:
