@@ -79,6 +79,7 @@ configs.update({
         # get current tag for actual config
         get_current_version = ->
           opts.path = "#{path}?fields=Clusters/desired_configs"
+          options?.log message: "Reading information about current configuration", level: 'INFO', module: 'ryba-ambari-actions/configs/update'
           utils.doRequestWithOptions opts, (err, statusCode, response) ->
             try
               throw err if err
@@ -93,18 +94,20 @@ configs.update({
               if desired_configs[options.config_type]?
                 options.current_version = desired_configs[options.config_type].version
                 options.current_tag = desired_configs[options.config_type].tag
+                options?.log message: "Desired config found type: #{options.config_type} version: #{options.current_version} tag: #{options.current_tag}", level: 'INFO', module: 'ryba-ambari-actions/configs/update'
                 options.config_version ?= parseInt(options.current_version)+1
                 options.new_version = parseInt(options.current_version)+1
                 options.new_tag = "version#{options.new_version}"
                 return do_diff()
-              options.tag ?= 'version1'
-              options.config_version = 1
+              options.new_tag = 'version1'
+              options.new_version = 1
               do_update()
             catch err
               error = err
               do_end()
         do_diff = ->
-          console.log "computing diff ambari.configs.update" if options.debug
+          options?.log message: "Computing diff for #{options.config_type}", level: 'INFO', module: 'ryba-ambari-actions/configs/update'
+          console.log "" if options.debug
           # do diff with the current config tag
           opts.path = "#{path}/configurations?type=#{options.config_type}&tag=#{options.current_tag}"
           console.log "options.config_type #{options.config_type}, current_tag: #{options.current_tag}" if options.debug
@@ -121,8 +124,10 @@ configs.update({
                 options.properties = merge {}, current_properties, options.properties
               #return do_update()
               for prop, value of options.properties
+                # if crypto.createHash('md5').update("#{current_properties[prop]}").digest('hex') isnt crypto.createHash('md5').update("#{value}").digest('hex')
                 if "#{current_properties[prop]}" isnt "#{value}"
-                  differences = differences||true
+                  options?.log message: "Property #{prop} was #{current_properties[prop]} and is now #{value}", level: 'INFO', module: 'ryba-ambari-actions/configs/update'
+                  differences = differences || true
                   break;
               if differences then do_update() else do_end()
             catch err
@@ -130,11 +135,12 @@ configs.update({
               do_end()
         do_update = ->
           try
-            console.log "update #{options.config_type} with tag: #{options.tag} version:#{options.config_version}" if options.debug
+            status = true
             options.description ?= "updated config #{options.config_type}"
             options.config_version = options.new_version
-            options.tag ?= options.new_tag
+            options.tag = options.new_tag
             differences = true
+            options?.log message: "update #{options.config_type} with tag: #{options.tag} version:#{options.config_version} through API", level: 'INFO', module: 'ryba-ambari-actions/configs/update'
             opts.content = options.content = JSON.stringify [
                 Clusters:
                   desired_config: [
@@ -170,3 +176,4 @@ configs.update({
     utils = require '../utils'
     path = require 'path'
     {merge} = require 'nikita/lib/misc'
+    crypto = require 'crypto'

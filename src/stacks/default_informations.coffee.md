@@ -63,11 +63,11 @@ stacks.default_informations({
           options.installed_services = [options.installed_services] unless Array.isArray options.installed_services
           for srv in options.installed_services
             throw Error "Unsupported service #{srv}" unless srv in [
-              'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX'
+              'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX', 'AMBARI_METRICS', 'LOGSEARCH'
             ]
         for srv in options.target_services
           throw Error "Unsupported service #{srv}" unless srv in [
-            'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX'
+            'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX', 'AMBARI_METRICS', 'LOGSEARCH'
           ]
         [hostname,port] = options.url.split("://")[1].split(':')
         options.sslEnabled ?= options.url.split('://')[0] is 'https'

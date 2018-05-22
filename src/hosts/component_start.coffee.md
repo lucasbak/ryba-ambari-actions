@@ -76,7 +76,9 @@ The node should already exist in ambari.
             throw Error response.message unless statusCode is 200
             throw Error "Can not start #{options.component_name} as it is in INSTALL_FAILED state" if response['HostRoles']['state'] is 'INSTALL_FAILED'
             status = false
-            console.log "component #{options.component_name} already ins STARTED state" if options.debug and  response['HostRoles']['state'] is 'STARTED'
+            options?.log message: "Starting Service #{options.component_name} via API", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_start'
+            options?.log message: "#{opts.path}", level: 'DEBUG', module: 'ryba-ambari-actions/hosts/component_start'
+            options?.log message: "component #{options.component_name} already in STARTED state" , level: 'INFO', module: 'ryba-ambari-actions/hosts/component_start'
             return do_end() if response['HostRoles']['state'] is 'STARTED'
             opts['method'] = 'PUT'
             opts.content = JSON.stringify

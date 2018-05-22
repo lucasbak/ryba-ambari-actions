@@ -73,11 +73,13 @@ Add a component to an existing component [REST API v2](https://github.com/apache
             utils.doRequestWithOptions opts, (err, statusCode, response) ->
               try
                 throw err if err
-                response = JSON.parse response
+                if parseInt(statusCode) isnt 201
+                  response = JSON.parse response
+                  throw Error response.message 
                 status = true
                 do_end()
               catch err
-                error = null
+                error = err
                 do_end()
           else
             status = false
