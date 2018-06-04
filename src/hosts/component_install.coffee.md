@@ -80,6 +80,7 @@ state. Default to false.
             response = JSON.parse response
             throw Error response.message unless statusCode is 200
             if not (response['HostRoles']['state'] in ['INIT'])
+              options?.log message: "Component NOT in INIT state  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_install' if parseInt(statusCode) is 200
               return do_end() if response['HostRoles']['state'] in ['INSTALLED','STARTED','STOPPED']
               return do_end() if response['HostRoles']['desired_state'] in ['STARTED','STOPPED']
             opts['method'] = 'PUT'
@@ -87,6 +88,7 @@ state. Default to false.
               RequestInfo:
                 context: "Service Install #{options.component_name} (API)"
               HostRoles: state: 'INSTALLED'
+            options?.log message: "PUT Component in INSTALLED state  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_install' if parseInt(statusCode) is 200
             utils.doRequestWithOptions opts, (err, statusCode, response) ->
               request_id = null
               do_wait = ->

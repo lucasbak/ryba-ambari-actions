@@ -101,28 +101,7 @@ it's value with the one given in option.
             throw err if err
             options.artifact_data ?= if options.source is 'STACK'
             then  informations.artifact_data else informations.kerberos_descriptor
-            do_cluster_level_configuration = ->
-              for global_identity , gl_id in options.artifact_data.identities
-                for  identity in options.identities
-                  continue unless global_identity.name is identity.name
-                  options.artifact_data.identities[gl_id] = identity
-                  global_identity = identity
-            do_service_or_component_level_configuration = ->
-              for service, k_srv_id in options.artifact_data.services
-                continue unless service.name is options.service
-                if options.component
-                  for component, k_co_id in service.components
-                    continue unless component.name is options.component
-                    for component_identity , k_identity_id in component.identities
-                      for  identity in options.identities
-                        continue unless component_identity.name is identity.name
-                        options.artifact_data.services[k_srv_id].components[k_co_id].identities[k_identity_id] = identity
-                else
-                  for service_identity, k_id in service.identities
-                    for identity in options.identities
-                      continue unless service_identity.name is identity.name
-                      options.artifact_data.services[k_srv_id].identities[k_id] = identity
-            if options.service then do_service_or_component_level_configuration() else do_cluster_level_configuration()
+            # preapre the request body and headers
             [hostname,port] = options.url.split("://")[1].split(':')
             options.sslEnabled ?= options.url.split('://')[0] is 'https'
             path = "/api/v1/clusters/#{options.cluster_name}/artifacts/kerberos_descriptor"
@@ -135,32 +114,60 @@ it's value with the one given in option.
             }
             opts.path = path
             opts['method'] = 'GET'
-            utils.doRequestWithOptions opts, (err, statusCode, response) ->
-              try
-                throw err if err
-                switch parseInt(statusCode)
-                  when 200 then opts['method'] = 'PUT'
-                  when 404 then opts['method'] = 'POST'
-                  else                    
-                    response = JSON.parse response
-                    throw Error response.message
-                opts.content = JSON.stringify
-                  artifact_data: options.artifact_data
-                utils.doRequestWithOptions opts, (err, statusCode, response) ->
-                  try
-                    throw err if err
-                    if statusCode not in [200,201]
+            do_request = ->
+              utils.doRequestWithOptions opts, (err, statusCode, response) ->
+                try
+                  throw err if err
+                  switch parseInt(statusCode)
+                    when 200 then opts['method'] = 'PUT'
+                    when 404 then opts['method'] = 'POST'
+                    else                    
                       response = JSON.parse response
                       throw Error response.message
-                    else
-                      status = true
+                  opts.content = JSON.stringify
+                    artifact_data: options.artifact_data
+                  utils.doRequestWithOptions opts, (err, statusCode, response) ->
+                    try
+                      throw err if err
+                      if statusCode not in [200,201]
+                        response = JSON.parse response
+                        throw Error response.message
+                      else
+                        status = true
+                        do_end()
+                    catch err
+                      error = err
                       do_end()
-                  catch err
-                    error = err
-                    do_end()
-              catch err
-                error = err
-                do_end()
+                catch err
+                  error = err
+                  do_end()
+            # prepare the cluster global level configuration function
+            do_cluster_level_configuration = ->
+              for global_identity , gl_id in options.artifact_data.identities
+                for  identity in options.identities
+                  continue unless global_identity.name is identity.name
+                  options.artifact_data.identities[gl_id] = identity
+                  global_identity = identity
+              do_request()
+            # prepare the service/component global level configuration function
+            do_service_or_component_level_configuration = ->
+              for service, k_srv_id in options.artifact_data.services
+                continue unless service.name is options.service
+                if options.component
+                  for component, k_co_id in service.components
+                    continue unless component.name is options.component
+                    for component_identity , k_identity_id in component.identities
+                      for  identity in options.identities
+                        continue unless component_identity.name is identity.name
+                        options.artifact_data.services[k_srv_id].components[k_co_id].identities[k_identity_id] = identity
+                    do_request()
+                else
+                  for service_identity, k_id in service.identities
+                    for identity in options.identities
+                      continue unless service_identity.name is identity.name
+                      options.artifact_data.services[k_srv_id].identities[k_id] = identity
+                  do_request()
+            if options.service then do_service_or_component_level_configuration() else do_cluster_level_configuration()
           catch err
             error = err
             do_end()
