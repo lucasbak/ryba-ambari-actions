@@ -107,13 +107,89 @@ get groupname and tag at index i to check if matches options.tag and options.gro
               throw err if err
               response = JSON.parse response
               throw response.message unless parseInt(statusCode) is 200
-              return do_end() if (response.ConfigGroup.group_name is options.group_name) and (response.ConfigGroup.tag is options.tag)
-              ## check if the index is the arrya's length (meaning that allitems have been checked)
-              index = index + 1
-              if index is configs.length
-                do_post_config_group()
+              if (response.ConfigGroup.group_name is options.group_name) and (response.ConfigGroup.tag is options.tag)
+                options?.log message: "Config group #{options.group_name} found via API", level: 'INFO', module: 'ryba-ambari-actions/configs/groups/add'
+                #check config groups are identical
+                should_update = false
+                for host in response.ConfigGroup.hosts.map( (host) -> host.host_name )
+                  if host not in options.hosts
+                    should_update = true
+                    options?.log message: "Current Config group #{options.group_name} does not contain host #{host}", level: 'INFO', module: 'ryba-ambari-actions/configs/groups/add'
+                for host in options.hosts
+                  if host not in response.ConfigGroup.hosts.map( (host) -> host.host_name )
+                    should_update = true
+                    options?.log message: "New Config group #{options.group_name} does not contain host #{host}", level: 'INFO', module: 'ryba-ambari-actions/configs/groups/add'
+                do_update_config = ->
+                  opts['method'] = 'PUT'
+                  opts.path = "#{path}/config_groups/#{config.ConfigGroup.id}"
+                  newConfigGroup =
+                    ConfigGroup: 
+                      cluster_name: options.cluster_name
+                      group_name: options.group_name
+                      tag: options.tag
+                      description: options.description
+                      hosts: options.hosts.map (host) -> host_name: host
+                      desired_configs: options.desired_configs
+                  opts.content = JSON.stringify newConfigGroup
+                  options?.log message: "Will update Config group #{options.group_name} with id #{config.ConfigGroup.id} via API", level: 'INFO', module: 'ryba-ambari-actions/configs/groups/add'
+                  utils.doRequestWithOptions opts, (err, statusCode, response) ->
+                    try
+                      throw err if err
+                      console.log err, statusCode, response
+                      switch parseInt(statusCode)
+                        when 200
+                          options?.log message: "Config group #{options.group_name} updated via API", level: 'INFO', module: 'ryba-ambari-actions/configs/groups/add'
+                          status = true
+                          index = index + 1
+                          if index is configs.length
+                            do_end()
+                          else
+                            do_get_config_group_item(index, configs)
+                        when 409
+                          status = false
+                          index = index + 1
+                          if index is configs.length
+                            do_end()
+                          else
+                            do_get_config_group_item(index, configs)
+                        else
+                          error = Error response.message
+                          return do_end()
+                    catch err
+                      error = err
+                      return do_end()
+                return do_update_config() if should_update
+                opts.path  = response.ConfigGroup.desired_configs[0].href
+                opts['method'] = 'GET'
+                options?.log message: "Reading current properties Config group #{options.group_name} updated via API", level: 'INFO', module: 'ryba-ambari-actions/configs/groups/add'
+                options?.log message: "url: #{opts.path}", level: 'INFO', module: 'ryba-ambari-actions/configs/groups/add'
+                utils.doRequestWithOptions opts, (err, statusCode, response) ->
+                  diff_props = []
+                  try
+                    throw err if err
+                    response = JSON.parse response
+                    throw response.message unless parseInt(statusCode) is 200
+                    for prop, v of response.items[0].properties
+                      if v isnt options.desired_configs[0].properties[prop]
+                        should_update = true
+                        diff_props.push prop
+                    for prop, v of options.desired_configs[0].properties
+                      if v isnt response.items[0].properties[prop]
+                        should_update = true
+                        diff_props.push prop unless diff_props.indexOf(prop) isnt -1
+                    for prop in diff_props
+                      options?.log message: "New Config group #{options.group_name} property #{prop} was #{response.items[0].properties[prop]} and is now #{options.desired_configs[0].properties[prop]}", level: 'INFO', module: 'ryba-ambari-actions/configs/groups/add'
+                    if should_update then do_update_config() else do_end()
+                  catch err
+                    error = err
+                    do_end()
               else
-                do_get_config_group_item(index, configs)
+                ## check if the index is the arrya's length (meaning that allitems have been checked)
+                index = index + 1
+                if index is configs.length
+                  do_post_config_group()#if get the length of the array without matching, mean the config group does not exist
+                else
+                  do_get_config_group_item(index, configs)
             catch err
               error = err
               do_end()
@@ -129,11 +205,11 @@ get groupname and tag at index i to check if matches options.tag and options.gro
               hosts: options.hosts.map (host) -> host_name: host
               desired_configs: options.desired_configs
           opts.content = JSON.stringify newConfigGroup
+          console.log opts
           process.stdout.write "config.grous.add: post configGroup #{options.group_name}\n" if options.debug
           # opts.json = true
           utils.doRequestWithOptions opts, (err, statusCode, response) ->
             try
-              console.log parseInt(statusCode)
               throw err if err
               response = JSON.parse response
               switch parseInt(statusCode)
@@ -153,7 +229,6 @@ get groupname and tag at index i to check if matches options.tag and options.gro
         opts.path = "#{path}/config_groups"
         utils.doRequestWithOptions opts, (err, statusCode, response) ->
           try
-            console.log parseInt(statusCode)
             throw err if err
             response = JSON.parse response
             throw response.message unless parseInt(statusCode) is 200

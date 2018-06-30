@@ -93,59 +93,7 @@
     , (err, status) ->
       return done err if err
       status.should.be.true()
-        
-    it 'post not existing cluster', (done) ->
-      options = Object.assign {}, config.options
-      options.name = "ryba_test"
-      options.version = 'HDP-2.5'
-      cluster_delete options, (err, status) ->
-        return done err if err
-        cluster_add options, (err, status) ->
-          return done err if err
-          status.should.be.true()
-          done()
     
-    it 'post existing cluster', (done) ->
-      options = Object.assign {}, config.options
-      options.name = "ryba_test"
-      options.version = 'HDP-2.5'
-      cluster_delete options, (err, status) ->
-        return done err if err
-        cluster_add options, (err, status) ->
-          return done err if err
-          status.should.be.true()
-          cluster_add options, (err, status) ->
-            return done err if err
-            status.should.be.false()
-            done()
-    
-    it 'delete not existing cluster', (done) ->
-      options = Object.assign {}, config.options
-      options.name = "ryba_test"
-      options.version = 'HDP-2.5'
-      cluster_delete options, (err, status) ->
-        return done err if err
-        cluster_add options, (err, status) ->
-          return done err if err
-          cluster_delete options, (err, status) ->
-            return done err if err
-            status.should.be.true()
-            done()
-
-    it 'delete existing cluster', (done) ->
-      options = Object.assign {}, config.options
-      options.name = "ryba_test"
-      options.version = 'HDP-2.5'
-      cluster_delete options, (err, status) ->
-        return done err if err
-        cluster_add options, (err, status) ->
-          return done err if err
-          cluster_delete options, (err, status) ->
-            return done err if err
-            cluster_delete options, (err, status) ->
-              return done err if err
-              status.should.be.false()
-              done()
 
     it 'finalise ambari in progress', ->
       options = Object.assign {}, config.options

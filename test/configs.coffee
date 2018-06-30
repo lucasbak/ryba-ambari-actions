@@ -21,7 +21,7 @@
 
     it 'error no version provided', (done) ->
       options = Object.assign {}, config.options
-      options.cluster_name = "ryba_test"
+      options.cluster_name = config.cluster_name
       options.properties =
         'dfs.nameservices': 'ryba_test'
       update options, (err) ->
@@ -30,7 +30,7 @@
 
     it 'error no properties provided', (done) ->
       options = Object.assign {}, config.options
-      options.cluster_name = "ryba_test"
+      options.cluster_name = config.cluster_name
       options.config_type = 'hdfs-site'
       update options, (err) ->
         err.message.should.eql 'Required Options: source or properties'
@@ -71,7 +71,7 @@
     it 'post config without tag (nikita)', ->
       options = Object.assign {}, config.options
       options.cluster_name = options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       options.config_type = 'hdfs-site'
       options.properties =
         'dfs.nameservices': 'ryba_test'
@@ -92,7 +92,7 @@
     it 'post config without tag no diffs (nikita)', ->
       options = Object.assign {}, config.options
       options.cluster_name = options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       options.config_type = 'hdfs-site'
       options.debug = true
       options.properties =
@@ -115,7 +115,7 @@
     it 'post config with tag (nikita)', ->
       options = Object.assign {}, config.options
       options.cluster_name = options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       options.config_type = 'hdfs-site'
       options.properties =
         'dfs.nameservices': 'ryba_test'
@@ -137,7 +137,7 @@
     it 'post config without from source tag (nikita)', ->
       options = Object.assign {}, config.options
       options.cluster_name = options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       options.config_type = 'hdfs-site'
       options.properties =
         'dfs.nameservices': 'ryba_test'
@@ -155,16 +155,17 @@
       .next (err) ->
         throw err if err?
         
-    it.only 'create config groups without hosts (nikita)', (done) ->
+    it 'create config groups without hosts (nikita)', (done) ->
       options = Object.assign {}, config.options
       options.tag = "config_group_test"
       options.cluster_name = options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       options.group_name = 'advanced_zookeeper'
       options.desired_configs =
         type: 'zoo.cfg'
         tag: 'slow_zookeeper'
         properties: 'tickTime': '5000'
+        # hosts: ['master01.metal.ryba']
       options.hosts = []
       # options.debug = true
       nikita
@@ -180,21 +181,37 @@
       .ambari.configs.groups.delete options
       .ambari.configs.groups.add options
       , (err, status) ->
+        return done err if err
         status.should.be.true()
-      .next (err) ->
-        done err
-      # .next (err) ->
-      #   done err
-      # group_add options, (err, status) ->
-      #   console.log err, status
-      # nikita
-      # .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
-      # .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
-      # .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"
-      # .registry.register ['ambari', 'configs', 'groups', 'add'], "#{__dirname}/../src/configs/groups/add"
-      # .ambari.cluster.delete options
-      # .ambari.cluster.add options
-      # .ambari.configs.groups.add options
-      # .next (err) ->
-      #   console.log err
-      #   err.should.be.null()
+        done()
+
+    it.only 'create config groups with hosts (nikita)', (done) ->
+      options = Object.assign {}, config.options
+      options.tag = "config_group_test"
+      options.cluster_name = options.name = 'ryba_test'
+      options.version = config.version
+      options.group_name = 'advanced_zookeeper'
+      options.desired_configs =
+        type: 'zoo.cfg'
+        tag: 'slow_zookeeper'
+        properties: 'tickTime': '5000'
+      options.hosts = ['master01.metal.ryba']
+      # options.debug = true
+      nikita
+      .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
+      .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
+      .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"
+      .registry.register ['ambari', 'configs', 'update'], "#{__dirname}/../src/configs/update"
+      .registry.register ['ambari', 'configs', 'groups', 'add'], "#{__dirname}/../src/configs/groups/add"
+      .registry.register ['ambari', 'configs', 'groups', 'delete'], "#{__dirname}/../src/configs/groups/delete"
+      .ambari.cluster.delete options
+      .ambari.cluster.add options
+      .ambari.cluster.persist options
+      .ambari.configs.groups.delete options
+      .ambari.configs.groups.add options
+      , (err, status) ->
+        return done err if err
+        status.should.be.true()
+        done()
+
+
