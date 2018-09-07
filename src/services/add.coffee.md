@@ -35,6 +35,7 @@ nikita
 ## Source Code
 
     module.exports = (options, callback) ->
+      options = options.options if typeof options.options is 'object'
       error = null
       status = false
       options.debug ?= false
@@ -67,10 +68,10 @@ nikita
             throw err if err
             response = JSON.parse response
             throw Error response.message if parseInt(statusCode) not in [200, 404]
-            options?.log message: "Service already exist #{options.name} on cluster #{options.cluster_name}", level: 'INFO', module: 'ryba-ambari-actions/services/add' if statusCode is 200
+            @log? message: "Service already exist #{options.name} on cluster #{options.cluster_name}", level: 'INFO', module: 'ryba-ambari-actions/services/add' if statusCode is 200
             return do_end() if statusCode is 200
             opts['method'] = 'POST'
-            options?.log message: "Add Service #{options.name}to cluster #{options.cluster_name}", level: 'INFO', module: 'ryba-ambari-actions/services/add'
+            @log? message: "Add Service #{options.name}to cluster #{options.cluster_name}", level: 'INFO', module: 'ryba-ambari-actions/services/add'
             opts.content =
               RequestInfo:
                 context: "Add Service #{options.name}"

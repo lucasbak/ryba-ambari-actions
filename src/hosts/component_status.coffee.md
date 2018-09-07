@@ -44,6 +44,7 @@ The service and the node should exist
 ## Source Code
 
     module.exports = (options, callback) ->
+      options = options.options if typeof options.options is 'object'
       error = null
       status = false
       options.debug ?= false
@@ -77,7 +78,7 @@ The service and the node should exist
         opts['method'] = 'GET'
         opts.path = "#{path}"
         waited = 0
-        options?.log message: "Wait Component to be available hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
+        @log? message: "Wait Component to be available hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
         do_request = ->
           utils.doRequestWithOptions opts, (err, statusCode, response) ->
               try
@@ -87,16 +88,16 @@ The service and the node should exist
                 throw Error "Component #{options.component_name} does not exist on host: #{options.fqdn}" if parseInt(statusCode) is 404
                 state = response['HostRoles']['state']
                 if state.toUpperCase() is options.status.toUpperCase()
-                  options?.log message: "Ok: Component in state #{options.status}  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
-                  options?.log message: "Clearing Interval", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
+                  @log message: "Ok: Component in state #{options.status}  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
+                  @log message: "Clearing Interval", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
                   clearInterval interval if interval
                   return do_end()
                 else
                   return do_end() if waited > options.timeout
-                  options?.log message: "Component not in state #{options.status}  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
+                  @log message: "Component not in state #{options.status}  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
               catch err
                 error = err
-        options?.log message: "Set Wait Interval 5000ms", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
+        @log message: "Set Wait Interval 5000ms", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
         interval = setInterval do_request, 5000
       catch err
         error = err

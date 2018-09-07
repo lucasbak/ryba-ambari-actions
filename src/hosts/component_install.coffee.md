@@ -42,6 +42,7 @@ state. Default to false.
 ## Source Code
 
     module.exports = (options, callback) ->
+      options = options.options if typeof options.options is 'object'
       error = null
       status = false
       options.debug ?= false
@@ -80,7 +81,7 @@ state. Default to false.
             response = JSON.parse response
             throw Error response.message unless statusCode is 200
             if not (response['HostRoles']['state'] in ['INIT'])
-              options?.log message: "Component NOT in INIT state  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_install' if parseInt(statusCode) is 200
+              @log? message: "Component NOT in INIT state  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_install' if parseInt(statusCode) is 200
               return do_end() if response['HostRoles']['state'] in ['INSTALLED','STARTED','STOPPED']
               return do_end() if response['HostRoles']['desired_state'] in ['STARTED','STOPPED']
             opts['method'] = 'PUT'
@@ -88,13 +89,13 @@ state. Default to false.
               RequestInfo:
                 context: "Service Install #{options.component_name} (API)"
               HostRoles: state: 'INSTALLED'
-            options?.log message: "PUT Component in INSTALLED state  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_install' if parseInt(statusCode) is 200
+            @log? message: "PUT Component in INSTALLED state  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_install' if parseInt(statusCode) is 200
             utils.doRequestWithOptions opts, (err, statusCode, response) ->
               request_id = null
               do_wait = ->
                 opts.path = "/api/v1/clusters/#{options.cluster_name}/requests/#{request_id}"
                 opts.method = 'GET'
-                options?.log message: "Wait Request id #{request_id}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_install'
+                @log? message: "Wait Request id #{request_id}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_install'
                 utils.doRequestWithOptions opts, (err, statusCode, response) ->
                   try
                     throw err if err
@@ -111,7 +112,7 @@ state. Default to false.
                 throw Error response.message unless parseInt(statusCode) is 202
                 response = JSON.parse response
                 request_id = response['Requests']['id']  
-                options?.log message: "Install Service #{options.component_name} Accepted with Request id #{request_id}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_install'
+                @log? message: "Install Service #{options.component_name} Accepted with Request id #{request_id}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_install'
                 throw Error response.message unless statusCode is 202
                 status = true
                 return if options.wait then interval = setInterval do_wait, 2000 else do_end()

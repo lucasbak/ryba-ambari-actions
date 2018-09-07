@@ -71,6 +71,7 @@ Will iterate through each identities object of the service'component, and will m
 it's value with the one given in option.
 
     module.exports = (options, callback) ->
+      options = options.options if typeof options.options is 'object'
       error = null
       differences = false
       options.debug ?= false

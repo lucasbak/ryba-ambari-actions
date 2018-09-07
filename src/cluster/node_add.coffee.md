@@ -34,6 +34,7 @@ nikita
 ## Source Code
 
     module.exports = (options, callback) ->
+      options = options.options if typeof options.options is 'object'
       error = null
       status = false
       options.debug ?= false
@@ -66,11 +67,13 @@ nikita
           if response?.status is 404
             console.log "host #{options.hostname} not found in ambari server cluster.node_add" if options.debug
             opts['method'] = 'POST'
+            @log? message: "Register host #{options.hostname} via API", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_stop  '
             utils.doRequestWithOptions opts, (err, statusCode, response) ->
               throw err if err
               status = true
               do_end()
           else
+            @log? message: "Host ost #{options.hostname} already exit via API", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_stop  '
             status = false
             do_end()
       catch err

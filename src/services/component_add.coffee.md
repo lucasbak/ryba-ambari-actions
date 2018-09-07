@@ -37,6 +37,7 @@ Add a component to an existing component [REST API v2](https://github.com/apache
 ## Source Code
 
     module.exports = (options, callback) ->
+      options = options.options if typeof options.options is 'object'
       error = null
       status = false
       options.debug ?= false

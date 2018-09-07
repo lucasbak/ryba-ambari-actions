@@ -9,6 +9,7 @@
           headers['Authorization'] ?= 'Basic ' + new Buffer(options.username + ':' + options.password).toString('base64');
         headers
       doRequestWithOptions: (options, callback) ->
+        options = options.options if typeof options.options is 'object'
         error = null
         statusCode = null
         response = null

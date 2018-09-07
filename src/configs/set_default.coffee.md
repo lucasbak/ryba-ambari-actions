@@ -38,6 +38,7 @@ configs.get_default({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options = options.options if typeof options.options is 'object'
       error = null
       differences = false
       options.debug ?= false
@@ -63,11 +64,11 @@ configs.get_default({
           options.installed_services = [options.installed_services] unless Array.isArray options.installed_services
           for srv in options.installed_services
             throw Error "Unsupported service #{srv}" unless srv in [
-              'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX', 'AMBARI_METRICS','LOGSEARCH'
+              'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX', 'AMBARI_METRICS','LOGSEARCH', 'ATLAS','ZEPPELIN'
             ]
         for srv in options.target_services
           throw Error "Unsupported service #{srv}" unless srv in [
-            'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX', 'AMBARI_METRICS','LOGSEARCH'
+            'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX', 'AMBARI_METRICS','LOGSEARCH', 'ATLAS', 'ZEPPELIN'
           ]
         services = []
         services.push options.target_services...

@@ -33,6 +33,7 @@ configs.get({
 ```
 
     module.exports = (options, callback) ->
+      options = options.options if typeof options.options is 'object'
       error = null
       properties = null
       status = false

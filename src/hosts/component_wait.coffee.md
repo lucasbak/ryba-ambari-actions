@@ -41,6 +41,7 @@ The service and the node should exist
 ## Source Code
 
     module.exports = (options, callback) ->
+      options = options.options if typeof options.options is 'object'
       error = null
       status = false
       options.debug ?= false
@@ -73,23 +74,23 @@ The service and the node should exist
         opts['method'] = 'GET'
         opts.path = "#{path}"
         waited = 0
-        options?.log message: "Wait Component to be available hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
+        @log? message: "Wait Component to be available hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
         do_request = ->
           utils.doRequestWithOptions opts, (err, statusCode, response) ->
               try
                 throw err if err
                 waited = waited + 1000
                 response = JSON.parse response
-                options?.log message: "Ok: Component available  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait' if parseInt(statusCode) is 200
-                options?.log message: "Clearing Interval", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait' if parseInt(statusCode) is 200
+                @log? message: "Ok: Component available  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait' if parseInt(statusCode) is 200
+                @log? message: "Clearing Interval", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait' if parseInt(statusCode) is 200
                 clearInterval interval if interval? and ((parseInt(statusCode) is 200) or (waited > options.timeout))
                 return do_end() if parseInt(statusCode) is 200
                 return do_end() if waited > options.timeout
-                options?.log message: "Not available Component  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
+                @log? message: "Not available Component  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
                 throw Error response.message if parseInt(statusCode) not in [200, 404]
               catch err
                 error = err
-        options?.log message: "Set Wait Interval 5000ms", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
+        @log? message: "Set Wait Interval 5000ms", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
         interval = setInterval do_request, 1000
       catch err
         error = err

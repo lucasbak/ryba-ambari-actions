@@ -36,6 +36,7 @@ The node should already exist in ambari.
 ## Source Code
 
     module.exports = (options, callback) ->
+      options = options.options if typeof options.options is 'object'
       error = null
       status = false
       requests = null

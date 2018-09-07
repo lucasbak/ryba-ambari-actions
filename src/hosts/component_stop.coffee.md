@@ -39,6 +39,7 @@ The node should already exist in ambari.
 ## Source Code
 
     module.exports = (options, callback) ->
+      options = options.options if typeof options.options is 'object'
       error = null
       status = false
       options.debug ?= false
@@ -84,8 +85,8 @@ The node should already exist in ambari.
               RequestInfo:
                 context: "Service Stop #{options.component_name} (API)"
               HostRoles: state: 'INSTALLED'
-            options?.log message: "Stopping Service #{options.component_name} via API", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_stop'
-            options?.log message: "#{opts.path}", level: 'DEBUG', module: 'ryba-ambari-actions/hosts/component_stop'
+            @log? message: "Stopping Service #{options.component_name} via API", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_stop'
+            @log? message: "#{opts.path}", level: 'DEBUG', module: 'ryba-ambari-actions/hosts/component_stop'
             utils.doRequestWithOptions opts, (err, statusCode, response) ->
               error = err
               status = true unless err

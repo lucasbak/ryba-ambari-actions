@@ -50,6 +50,7 @@ This functions does a single post request with desired_configs and config_group.
 Hosts can be empty as the config group can be uptade with a later PUT request.
 
     module.exports = (options, callback) ->
+      options = options.options if typeof options.options is 'object'
       process.stdout.write "Entering config.grous.delete\n" if options.debug
       error = null
       status = false

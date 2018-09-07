@@ -35,6 +35,7 @@ nikita
 ## Source Code
 
     module.exports = (options, callback) ->
+      options = options.options if typeof options.options is 'object'
       error = null
       status = false
       options.debug ?= false
@@ -62,14 +63,14 @@ nikita
         }
         opts['method'] = 'GET'
         opts.path = "#{path}/#{options.name}"
-        options?.log message: "Check Cluster already exist: #{options.name} via API", level: 'INFO', module: 'ryba-ambari-actions/cluster/add'
+        @log? message: "Check Cluster already exist: #{options.name} via API", level: 'INFO', module: 'ryba-ambari-actions/cluster/add'
         utils.doRequestWithOptions opts, (err, statusCode, response) ->
           throw err if err
           response = JSON.parse response
           if response?.status is 404
             console.log "cluster #{options.name} not found in ambari server cluster.add" if options.debug
-            options?.log message: "Adding Cluster with name: #{options.name} via API", level: 'INFO', module: 'ryba-ambari-actions/cluster/add'
-            options?.log message: "#{opts.path}", level: 'INFO', module: 'ryba-ambari-actions/cluster/add'
+            @log? message: "Adding Cluster with name: #{options.name} via API", level: 'INFO', module: 'ryba-ambari-actions/cluster/add'
+            @log? message: "#{opts.path}", level: 'INFO', module: 'ryba-ambari-actions/cluster/add'
             opts['method'] = 'POST'
             opts.content ?=
               RequestInfo:

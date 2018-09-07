@@ -29,6 +29,7 @@ Persist Ambari Cluster resource using the [REST API v2](https://github.com/apach
 ## Source Code
 
     module.exports = (options, callback) ->
+      options = options.options if typeof options.options is 'object'
       error = null
       status = false
       options.debug ?= false

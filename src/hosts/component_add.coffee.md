@@ -33,6 +33,7 @@ The node should already exist in ambari.
 ## Source Code
 
     module.exports = (options, callback) ->
+      options = options.options if typeof options.options is 'object'
       error = null
       status = false
       options.debug ?= false
@@ -66,8 +67,8 @@ The node should already exist in ambari.
             response = JSON.parse response
             if parseInt(statusCode) is 404
               console.log "component_name #{options.component_name} not found in ambari server hosts.component_name" if options.debug
-              options?.log message: "Adding Service #{options.component_name} via API", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_stop  '
-              options?.log message: "#{opts.path}", level: 'DEBUG', module: 'ryba-ambari-actions/hosts/component_stop '
+              @log? message: "Adding Service #{options.component_name} via API", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_stop  '
+              @log? message: "#{opts.path}", level: 'DEBUG', module: 'ryba-ambari-actions/hosts/component_stop '
               opts['method'] = 'POST'
               utils.doRequestWithOptions opts, (err, statusCode, response) ->
                 try
