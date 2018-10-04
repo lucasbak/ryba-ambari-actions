@@ -19,7 +19,7 @@
         error = Error 'Invalid method' unless options.method in ['GET','POST','PUT','DELETE']
         error = Error 'Mssing path' unless options.path?
         do_end = ->
-          callback error, statusCode, response if callback?
+          return callback error, statusCode, response if callback?
           new Promise (fullfil, reject) ->
             reject error if error?
             fullfil statusCode, response
@@ -65,12 +65,16 @@
             if options.content?
               request.on 'error', (err) ->
                 error = err
+                if err.errno is 'EHOSTUNREACH'
+                  error = Error "The server #{options.hostname}:#{options.port} is not available"
                 do_end()
               request.write options.content
               request.end()
             else
               request.on 'error', (err) ->
                 error = err
+                if err.errno is 'EHOSTUNREACH'
+                  error = Error "The server #{options.hostname}:#{options.port} is not available"
                 do_end()
               request.end()
           catch err
