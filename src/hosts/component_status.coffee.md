@@ -78,27 +78,25 @@ The service and the node should exist
         opts['method'] = 'GET'
         opts.path = "#{path}"
         waited = 0
-        @log? message: "Wait Component to be available hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
         do_request = ->
           utils.doRequestWithOptions opts, (err, statusCode, response) ->
-              try
-                throw err if err
-                waited = waited + 5000
-                response = JSON.parse response
-                throw Error "Component #{options.component_name} does not exist on host: #{options.fqdn}" if parseInt(statusCode) is 404
-                state = response['HostRoles']['state']
-                if state.toUpperCase() is options.status.toUpperCase()
-                  @log message: "Ok: Component in state #{options.status}  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
-                  @log message: "Clearing Interval", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
-                  clearInterval interval if interval
-                  return do_end()
+            try
+              throw err if err
+              response = JSON.parse response
+              throw Error response.message if parseInt(statusCode) not in [200, 404]
+              switch parseInt(statusCode)
+                when 200
+                  status = switch response['HostRoles']['state']
+                    when 'STARTED' then true
+                    when 'INSTALLED' then false
+                    else false
                 else
-                  return do_end() if waited > options.timeout
-                  @log message: "Component not in state #{options.status}  hostname:#{options.hostname} component: #{options.component_name}", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
-              catch err
-                error = err
-        @log message: "Set Wait Interval 5000ms", level: 'INFO', module: 'ryba-ambari-actions/hosts/component_wait'
-        interval = setInterval do_request, 5000
+                  status = false
+              do_end()
+            catch err
+              error = err
+              do_end()
+        do_request()
       catch err
         error = err
         do_end()
