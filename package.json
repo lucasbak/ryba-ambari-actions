@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "pretest": "coffee -b -o lib src",
-    "test": "NODE_ENV=test mocha "
+    "test": "./node_modules/mocha/bin/mocha test/configs.coffee  test/cluster.coffee test/stacks.coffee test/services.coffee test/node.coffee"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,8 @@
   "dependencies": {
     "coffeescript": "^2.0.2",
     "mocha": "^4.1.0",
-    "nikita": "~0.6.3",
-    "should": "^13.2.1"
+    "nikita": "^0.8.0",
+    "should": "^13.2.3",
+    "url": "^0.11.0"
   }
 }

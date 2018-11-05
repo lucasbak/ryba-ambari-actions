@@ -206,7 +206,6 @@ get groupname and tag at index i to check if matches options.tag and options.gro
               hosts: options.hosts.map (host) -> host_name: host
               desired_configs: options.desired_configs
           opts.content = JSON.stringify newConfigGroup
-          console.log opts
           process.stdout.write "config.grous.add: post configGroup #{options.group_name}\n" if options.debug
           # opts.json = true
           utils.doRequestWithOptions opts, (err, statusCode, response) ->

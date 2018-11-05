@@ -1,0 +1,38 @@
+
+# Run all tests: `docker-compose up --abort-on-container-exit`
+# Enter console: `docker-compose run --rm --entrypoint /bin/bash nodejs` and `service sshd start`
+# Run a subset of the tests: `docker-compose run --rm nodejs test/service`
+
+# TODO: implement variable substitution once default value is implemented
+# see https://github.com/docker/compose/issues/2441
+
+version: '2'
+services:
+  ambari:
+    build: ./server
+    image: ambari_actions_server
+    depends_on:
+      - mariadb
+    ports:
+      - '8080:8080'
+    expose:
+      - '8080'
+  mariadb:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ambari123
+    expose:
+      - "3306"
+  nodejs:
+    build: ./nodejs
+    image: ambari_actions_nodejs
+    volumes:
+      - ..:/ryba-ambari-actions
+    depends_on:
+      - ambari
+  httpd:
+    image: httpd:2.4
+    volumes:
+      - ../docker/httpd/html:/usr/local/apache2/htdocs/
+    ports:
+      - '10800:80'
