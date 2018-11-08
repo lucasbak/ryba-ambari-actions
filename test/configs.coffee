@@ -192,6 +192,7 @@
       .ambari.configs.groups.add options
       , (err, {status}) ->
         status.should.be.true()
+        @ambari.cluster.delete options
       .next done
     
     it 'create config groups with hosts (nikita)', (done) ->
@@ -214,6 +215,7 @@
       .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
       .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"
+      .registry.register ['ambari', 'cluster','wait'], "#{__dirname}/../src/cluster/wait"
       .registry.register ['ambari', 'configs', 'update'], "#{__dirname}/../src/configs/update"
       .registry.register ['ambari', 'configs', 'groups', 'add'], "#{__dirname}/../src/configs/groups/add"
       .registry.register ['ambari', 'configs', 'groups', 'delete'], "#{__dirname}/../src/configs/groups/delete"
@@ -226,6 +228,7 @@
       , (err, {status}) ->
         return done err if err
         status.should.be.true()
+        @ambari.cluster.delete options
         done()
     # 
     # 

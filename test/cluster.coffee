@@ -95,7 +95,7 @@
       status.should.be.true()
     
 
-    it 'finalise ambari in progress', ->
+    it 'finalise ambari in progress', (done) ->
       options = Object.assign {}, config.options
       options.name = 'ryba_test'
       options.version = 'HDP-2.5'
@@ -104,8 +104,9 @@
       .registry.register ['ambari', 'cluster_delete'], "#{__dirname}/../src/cluster/delete"
       .ambari.cluster_delete options
       .ambari.cluster_add options
-      .next (err) ->
-        return done err if err
+      , (err, status) ->
         persist options, (err, status) ->
           return done err if err
           status.should.be.true()
+      .ambari.cluster_delete options
+      .next done
