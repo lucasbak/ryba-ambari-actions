@@ -12,11 +12,12 @@ RUN systemctl enable ambari-server
 # Install JAVA 1.8
 WORKDIR /tmp
 ENV JAVA_HOME /usr/java/default
-#RUN curl -L -O -H "Cookie: oraclelicense=accept-securebackup-cookie" -k "http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.rpm"
-ADD jdk/jdk-8u191-linux-x64.rpm /tmp/jdk-8u191-linux-x64.rpm
-RUN rpm -ivh jdk-8u191-linux-x64.rpm
-ADD jdk/jce_policy-8.zip /tmp/jce_policy-8.zip
-# RUN curl -L -O -H "Cookie: oraclelicense=accept-securebackup-cookie" -k "http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip"
+RUN curl -L -O -H "Cookie: oraclelicense=accept-securebackup-cookie" -k "http://public-repo-1.hortonworks.com/ARTIFACTS/jdk-8u112-linux-x64.tar.gz"
+RUN mkdir -p /usr/java/jdk-8u112
+RUN tar -xzf jdk-8u112-linux-x64.tar.gz --strip-components 1  -C /usr/java/jdk-8u112
+RUN ln -s /usr/java/jdk-8u112 /usr/java/default
+RUN rm -f jdk-8u112-linux-x64.tar.gz
+RUN curl -L -O -H "Cookie: oraclelicense=accept-securebackup-cookie" -k "http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip"
 RUN unzip jce_policy-8.zip
 RUN cp UnlimitedJCEPolicyJDK8/US_export_policy.jar /usr/java/default/jre/lib/security/US_export_policy.jar
 RUN cp UnlimitedJCEPolicyJDK8/local_policy.jar /usr/java/default/jre/lib/security/local_policy.jar
