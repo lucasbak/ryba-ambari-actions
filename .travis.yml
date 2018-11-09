@@ -6,4 +6,4 @@ sudo: required
 services:
   - docker
 script: 
-  - cd docker && docker-compose up
+  - cd docker && docker-compose up -d ambari httpd mariadb && docker-compose run nodejs test/configs.coffee  test/cluster.coffee test/stacks.coffee test/services.coffee test/node.coffee
