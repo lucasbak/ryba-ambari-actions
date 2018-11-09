@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/lucasbak/ryba-ambari-actions.svg)](http://travis-ci.org/ucasbak/ryba-ambari-actions)
+
 # Ryba Ambari Actions
 
 Gather a set of functions to communicate with [Apche Ambari](https://ambari.apache.org/) [REST API v2](https://github.com/apache/ambari/blob/trunk/ambari-server/docs/api/v1)
@@ -48,7 +50,7 @@ configs.get({
   - wait
 
 * configs
-  * groups
+  - groups
    - add
    - delete
   - get
