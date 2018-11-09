@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/lucasbak/ryba-ambari-actions.svg)](http://travis-ci.org/ucasbak/ryba-ambari-actions)
+[![Build Status](https://secure.travis-ci.org/lucasbak/ryba-ambari-actions.svg)](http://travis-ci.org/lucasbak/ryba-ambari-actions)
 
 # Ryba Ambari Actions
 
