@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "pretest": "coffee -b -o lib src",
-    "test": "./node_modules/mocha/bin/mocha  test/cluster.coffee test/node.coffee test/configs.coffee test/services.coffee test/stacks.coffee "
+    "test": "./node_modules/mocha/bin/mocha test/configs.coffee  test/cluster.coffee test/stacks.coffee test/services.coffee test/node.coffee"
   },
   "repository": {
     "type": "git",

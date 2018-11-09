@@ -187,6 +187,7 @@
       .registry.register ['ambari', 'cluster','wait'], "#{__dirname}/../src/cluster/wait"
       .ambari.cluster.delete options
       .ambari.cluster.add options
+      .ambari.cluster.wait options
       .ambari.cluster.persist options
       .ambari.configs.update options
       .ambari.configs.groups.add options
