@@ -72,7 +72,7 @@
     it 'post service zookeeper (nikita)', ->
       options = Object.assign {}, config.options
       options.cluster_name = options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       options.config_type = 'zoo.cfg'
       options.properties =
         "autopurge.purgeInterval":"24",
@@ -103,7 +103,7 @@
     it 'post service zookeeper already exist (nikita)', ->
       options = Object.assign {}, config.options
       options.cluster_name = options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       options.config_type = 'zoo.cfg'
       options.properties =
         "autopurge.purgeInterval":"24",
@@ -135,7 +135,7 @@
     it 'delete service zookeeper exist (nikita)', ->
       options = Object.assign {}, config.options
       options.cluster_name = options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       options.config_type = 'zoo.cfg'
       options.properties =
         "autopurge.purgeInterval":"24",
@@ -168,7 +168,7 @@
     it 'delete service zookeeper not exist (nikita)', ->
       options = Object.assign {}, config.options
       options.cluster_name = options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       options.config_type = 'zoo.cfg'
       options.properties =
         "autopurge.purgeInterval":"24",
@@ -200,7 +200,7 @@
     it 'post  component zookeeper_server (nikita)', ->
       options = Object.assign {}, config.options
       options.cluster_name = options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       options.config_type = 'zoo.cfg'
       options.component_name = 'ZOOKEEPER_SERVER'
       options.service_name = 'ZOOKEEPER'

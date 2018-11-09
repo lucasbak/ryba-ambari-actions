@@ -42,7 +42,7 @@
     it 'post not existing cluster (nikita)', ->
       options = Object.assign {}, config.options
       options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       nikita
       .registry.register ['ambari', 'cluster_add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster_delete'], "#{__dirname}/../src/cluster/delete"
@@ -55,7 +55,7 @@
     it 'post existing cluster (nikita)', ->
       options = Object.assign {}, config.options
       options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       nikita
       .registry.register ['ambari', 'cluster_add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster_delete'], "#{__dirname}/../src/cluster/delete"
@@ -69,7 +69,7 @@
     it 'delete existing cluster (nikita)', ->
       options = Object.assign {}, config.options
       options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       nikita
       .registry.register ['ambari', 'cluster_add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster_delete'], "#{__dirname}/../src/cluster/delete"
@@ -83,7 +83,7 @@
     it 'delete not existing cluster (nikita)', ->
       options = Object.assign {}, config.options
       options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       nikita
       .registry.register ['ambari', 'cluster_add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster_delete'], "#{__dirname}/../src/cluster/delete"
@@ -98,7 +98,7 @@
     it 'finalise ambari in progress', (done) ->
       options = Object.assign {}, config.options
       options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       nikita
       .registry.register ['ambari', 'cluster_add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster_delete'], "#{__dirname}/../src/cluster/delete"

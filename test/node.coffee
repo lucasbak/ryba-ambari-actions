@@ -17,7 +17,7 @@
       #note: node is registered an external cluster (will not delete it)
       options = Object.assign {}, config.options
       options.cluster_name = options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       options.hostname = 'master01.metal.ryba'
       nikita
       .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
@@ -34,7 +34,7 @@
       #note: node is registered an external cluster (will not delete it)
       options = Object.assign {}, config.options
       options.cluster_name = options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       options.hostname = 'master01.metal.ryba'
       nikita
       .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
@@ -54,7 +54,7 @@
     it 'post component zookeeper_server (nikita)', ->
       options = Object.assign {}, config.options
       options.cluster_name = options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       options.config_type = 'zoo.cfg'
       options.component_name = 'ZOOKEEPER_SERVER'
       options.service_name = 'ZOOKEEPER'
@@ -97,7 +97,7 @@
     it 'put state installed component zookeeper_server(nikita)', ->
       options = Object.assign {}, config.options
       options.cluster_name = options.name = 'ryba_test'
-      options.version = 'HDP-2.5'
+      options.version = config.version
       options.config_type = 'zoo.cfg'
       options.component_name = 'ZOOKEEPER_SERVER'
       options.service_name = 'ZOOKEEPER'

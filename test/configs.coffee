@@ -210,19 +210,19 @@
         'tickTime': '1000'
       options.hosts = ['ambari']
       options.provisioning_state  = 'INSTALLED'
+      options.hostname = 'ambari'
       # options.debug = true
       nikita()
       .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
       .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"
-      .registry.register ['ambari', 'cluster','wait'], "#{__dirname}/../src/cluster/wait"
       .registry.register ['ambari', 'configs', 'update'], "#{__dirname}/../src/configs/update"
       .registry.register ['ambari', 'configs', 'groups', 'add'], "#{__dirname}/../src/configs/groups/add"
-      .registry.register ['ambari', 'configs', 'groups', 'delete'], "#{__dirname}/../src/configs/groups/delete"
-      .registry.register ['ambari', 'cluster','provisioning_state'], "#{__dirname}/../src/cluster/provisioning_state"      
+      .registry.register ['ambari', 'cluster','node_add'], "#{__dirname}/../src/cluster/node_add"
       .ambari.cluster.delete options
       .ambari.cluster.add options
       .ambari.cluster.persist options
+      .ambari.cluster.node_add options
       .ambari.configs.update options
       .ambari.configs.groups.add options
       , (err, {status}) ->

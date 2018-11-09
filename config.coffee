@@ -1,6 +1,6 @@
 
   module.exports =
-    version: 'HDP-2.5'
+    version: 'HDP-2.6'
     cluster_name: 'ryba_test'
     options:
       username: 'admin'
