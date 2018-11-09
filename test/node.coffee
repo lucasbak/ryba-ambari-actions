@@ -3,7 +3,7 @@
   cluster_add = require '../src/cluster/add'
   cluster_delete = require '../src/cluster/delete'
   node_add = require '../src/cluster/node_add'
-  nikita = require('nikita')()
+  nikita = require 'nikita'
 
   describe 'hosts actions', ->
 
@@ -19,7 +19,7 @@
       options.cluster_name = options.name = 'ryba_test'
       options.version = config.version
       options.hostname = 'master01.metal.ryba'
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"
       .registry.register ['ambari', 'cluster','node_add'], "#{__dirname}/../src/cluster/node_add"
@@ -36,7 +36,7 @@
       options.cluster_name = options.name = 'ryba_test'
       options.version = config.version
       options.hostname = 'master01.metal.ryba'
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"
       .registry.register ['ambari', 'cluster','node_add'], "#{__dirname}/../src/cluster/node_add"
@@ -71,7 +71,7 @@
       services_add.name = 'ZOOKEEPER'
       host_component_add = Object.assign {}, options
       host_component_add.hostname = 'master01.metal.ryba'
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
       .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"
@@ -80,6 +80,7 @@
       .registry.register ['ambari', 'hosts', 'add'], "#{__dirname}/../src/hosts/add"
       .registry.register ['ambari', 'services', 'component_add'], "#{__dirname}/../src/services/component_add"
       .registry.register ['ambari', 'hosts', 'component_add'], "#{__dirname}/../src/hosts/component_add"
+      .registry.register ['ambari', 'cluster','node_add'], "#{__dirname}/../src/cluster/node_add"
       .ambari.cluster.delete options
       .ambari.cluster.add options
       .ambari.cluster.persist options
@@ -120,7 +121,7 @@
       smoke_user_config.config_type = 'cluster-env'
       smoke_user_config.properties =
         smokeuser: 'ambari-qa'
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
       .registry.register ['ambari', 'cluster','node_add'], "#{__dirname}/../src/cluster/node_add"

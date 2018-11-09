@@ -3,7 +3,7 @@
   cluster_add = require '../src/cluster/add'
   cluster_delete = require '../src/cluster/delete'
   persist = require '../src/cluster/persist'
-  nikita = require('nikita')()
+  nikita = require 'nikita'
 
   
   describe 'cluster actions', ->
@@ -23,7 +23,7 @@
 
     it 'error if no name (nikita)', ->
       options = Object.assign {}, config.options
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster_add'], "#{__dirname}/../src/cluster/add"
       .ambari.cluster_add options
       .next (err) ->
@@ -32,7 +32,7 @@
     it 'error if no version (nikita)', ->
       options = Object.assign {}, config.options
       options.name = 'ryba_test'
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster_add'], "#{__dirname}/../src/cluster/add"
       .ambari.cluster_add options
       .next (err) ->
@@ -43,7 +43,7 @@
       options = Object.assign {}, config.options
       options.name = 'ryba_test'
       options.version = config.version
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster_add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster_delete'], "#{__dirname}/../src/cluster/delete"
       .ambari.cluster_delete options
@@ -56,7 +56,7 @@
       options = Object.assign {}, config.options
       options.name = 'ryba_test'
       options.version = config.version
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster_add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster_delete'], "#{__dirname}/../src/cluster/delete"
       .ambari.cluster_delete options
@@ -70,7 +70,7 @@
       options = Object.assign {}, config.options
       options.name = 'ryba_test'
       options.version = config.version
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster_add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster_delete'], "#{__dirname}/../src/cluster/delete"
       .ambari.cluster_delete options
@@ -84,7 +84,7 @@
       options = Object.assign {}, config.options
       options.name = 'ryba_test'
       options.version = config.version
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster_add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster_delete'], "#{__dirname}/../src/cluster/delete"
       .ambari.cluster_delete options
@@ -99,7 +99,7 @@
       options = Object.assign {}, config.options
       options.name = 'ryba_test'
       options.version = config.version
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster_add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster_delete'], "#{__dirname}/../src/cluster/delete"
       .ambari.cluster_delete options

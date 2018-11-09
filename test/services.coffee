@@ -6,7 +6,7 @@
   update = require '../src/configs/update'
   service_add = require '../src/services/add'
   service_delete = require '../src/services/delete'
-  nikita = require('nikita')()
+  nikita = require 'nikita'
 
   
   describe 'services actions', ->
@@ -42,7 +42,7 @@
       options.config_type = 'hdfs-site'
       options.properties =
         'dfs.nameservices': 'ryba_test'
-      nikita
+      nikita()
       .registry.register ['ambari', 'configs', 'update'], "#{__dirname}/../src/configs/update"
       .ambari.configs.update options
       .next (err) ->
@@ -53,7 +53,7 @@
       options.cluster_name = 'ryba_test'
       options.properties =
         'dfs.nameservices': 'ryba_test'
-      nikita
+      nikita()
       .registry.register ['ambari', 'configs', 'update'], "#{__dirname}/../src/configs/update"
       .ambari.configs.update options
       .next (err) ->
@@ -63,7 +63,7 @@
       options = Object.assign {}, config.options
       options.cluster_name = 'ryba_test'
       options.config_type = 'hdfs-site'
-      nikita
+      nikita()
       .registry.register ['ambari', 'configs', 'update'], "#{__dirname}/../src/configs/update"
       .ambari.configs.update options
       , (err) ->
@@ -84,7 +84,7 @@
         "clientPort":"2181"
       services_add = Object.assign {}, options
       services_add.name = 'ZOOKEEPER'
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
       .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"
@@ -115,7 +115,7 @@
         "clientPort":"2181"
       services_add = Object.assign {}, options
       services_add.name = 'ZOOKEEPER'
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
       .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"
@@ -147,7 +147,7 @@
         "clientPort":"2181"
       services_add = Object.assign {}, options
       services_add.name = 'ZOOKEEPER'
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
       .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"
@@ -180,7 +180,7 @@
         "clientPort":"2181"
       services_add = Object.assign {}, options
       services_add.name = 'ZOOKEEPER'
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
       .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"
@@ -214,7 +214,7 @@
         "clientPort":"2181"
       services_add = Object.assign {}, options
       services_add.component_name = 'ZOOKEEPER_SERVER'
-      nikita
+      nikita()
       .registry.register ['ambari', 'cluster','add'], "#{__dirname}/../src/cluster/add"
       .registry.register ['ambari', 'cluster','persist'], "#{__dirname}/../src/cluster/persist"
       .registry.register ['ambari', 'cluster','delete'], "#{__dirname}/../src/cluster/delete"

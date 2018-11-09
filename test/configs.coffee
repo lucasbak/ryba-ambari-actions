@@ -187,7 +187,6 @@
       .registry.register ['ambari', 'cluster','wait'], "#{__dirname}/../src/cluster/wait"
       .ambari.cluster.delete options
       .ambari.cluster.add options
-      .ambari.cluster.wait options
       .ambari.cluster.persist options
       .ambari.configs.update options
       .ambari.configs.groups.add options
@@ -221,10 +220,12 @@
       .registry.register ['ambari', 'configs', 'groups', 'add'], "#{__dirname}/../src/configs/groups/add"
       .registry.register ['ambari', 'cluster','node_add'], "#{__dirname}/../src/cluster/node_add"
       .registry.register ['ambari', 'hosts', 'add'], "#{__dirname}/../src/hosts/add"
+      .registry.register ['ambari', 'hosts', 'wait'], "#{__dirname}/../src/hosts/wait"
       .ambari.cluster.delete options
       .ambari.cluster.add options
       .ambari.cluster.persist options
       .ambari.hosts.add options
+      .ambari.hosts.wait options
       .ambari.cluster.node_add options
       .ambari.configs.update options
       .ambari.configs.groups.add options
