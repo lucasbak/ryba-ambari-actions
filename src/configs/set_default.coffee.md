@@ -94,7 +94,7 @@ configs.get_default({
                 for configuration in srv.configurations
                   # console.log configuration.href
                   console.log "comparing property #{configuration['StackConfigurations'].property_name}" if options.debug
-                  config_type = configuration['StackConfigurations']['type'].split('.')[0]
+                  config_type = configuration['StackConfigurations']['type'].split('.xml')[0]
                   console.log "- config type is #{config_type}" if options.debug
                   property_name = "#{configuration['StackConfigurations']['property_name']}"
                   default_configuration_request[service][config_type] ?= {}
