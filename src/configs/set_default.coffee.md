@@ -64,11 +64,11 @@ configs.get_default({
           options.installed_services = [options.installed_services] unless Array.isArray options.installed_services
           for srv in options.installed_services
             throw Error "Unsupported service #{srv}" unless srv in [
-              'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX', 'AMBARI_METRICS','LOGSEARCH', 'ATLAS','ZEPPELIN','AMBARI_INFRA'
+              'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX', 'AMBARI_METRICS','LOGSEARCH', 'ATLAS','ZEPPELIN','AMBARI_INFRA', 'SMARTSENSE'
             ]
         for srv in options.target_services
           throw Error "Unsupported service #{srv}" unless srv in [
-            'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX', 'AMBARI_METRICS','LOGSEARCH', 'ATLAS', 'ZEPPELIN', 'AMBARI_INFRA'
+            'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX', 'AMBARI_METRICS','LOGSEARCH', 'ATLAS', 'ZEPPELIN', 'AMBARI_INFRA', 'SMARTSENSE'
           ]
         services = []
         services.push options.target_services...
