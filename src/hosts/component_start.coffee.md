@@ -1,6 +1,3 @@
-Ncurl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X PUT -d '{"HostRoles": {"state": "STARTED"}}' http://AMBARI_SERVER_HOST:8080/api/v1/clusters/CLUSTER_NAME/hosts/NEW_HOST_ADDED/host_components/GANGLIA_MONITOR
-
-
 # Ambari Start Component host
 
 Add a host to an ambari cluster [REST API v2](https://github.com/apache/ambari/blob/trunk/ambari-server/docs/api/v1)
@@ -34,6 +31,10 @@ The node should already exist in ambari.
 }, function(err, status){
   console.log( err ? err.message : "Component" + options.component_name + "Started: " + status)
 })
+```
+bash equivalent
+```bash
+curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X PUT -d '{"HostRoles": {"state": "STARTED"}}' http://AMBARI_SERVER_HOST:8080/api/v1/clusters/CLUSTER_NAME/hosts/NEW_HOST_ADDED/host_components/GANGLIA_MONITOR
 ```
 
 ## Source Code
