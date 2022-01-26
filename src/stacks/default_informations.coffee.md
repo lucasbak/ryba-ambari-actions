@@ -57,17 +57,17 @@ stacks.default_informations({
         throw Error 'Required Options: target_services' unless options.target_services
         throw Error 'Required Options: stack_name' unless options.stack_name
         throw Error 'Required Options: stack_version' unless options.stack_version
-        throw Error "Unsupported Stack Name #{options.stack_name}" unless options.stack_name in ['HDP','HDF']
+        throw Error "Unsupported Stack Name #{options.stack_name}" unless options.stack_name in ['HDP','HDF','ODP']
         options.target_services = [options.target_services] unless Array.isArray options.target_services
         if options.installed_services?
           options.installed_services = [options.installed_services] unless Array.isArray options.installed_services
           for srv in options.installed_services
             throw Error "Unsupported service #{srv}" unless srv in [
-              'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX', 'AMBARI_METRICS', 'LOGSEARCH', 'ATLAS', 'ZEPPELIN', 'AMBARI_INFRA', 'SMARTSENSE'
+              'DRUID','KERBEROS','RANGER','RANGER_KMS','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX', 'AMBARI_METRICS', 'LOGSEARCH', 'ATLAS', 'ZEPPELIN', 'AMBARI_INFRA', 'SMARTSENSE','STORM'
             ]
         for srv in options.target_services
           throw Error "Unsupported service #{srv}" unless srv in [
-            'KERBEROS','RANGER','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX', 'AMBARI_METRICS', 'LOGSEARCH', 'ATLAS', 'ZEPPELIN', 'AMBARI_INFRA', 'SMARTSENSE'
+            'DRUID','KERBEROS','RANGER','RANGER_KMS','HDFS','YARN','HIVE','HBASE','SQOOP','OOZIE','PIG','TEZ','NIFI','KAFKA','MAPREDUCE2','ZOOKEEPER', 'SPARK', 'SPARK2', 'KNOX', 'AMBARI_METRICS', 'LOGSEARCH', 'ATLAS', 'ZEPPELIN', 'AMBARI_INFRA', 'SMARTSENSE','STORM'
           ]
         [hostname,port] = options.url.split("://")[1].split(':')
         options.sslEnabled ?= options.url.split('://')[0] is 'https'
@@ -119,4 +119,3 @@ stacks.default_informations({
 
     utils = require '../utils'
     path = require 'path'
-    {merge} = require 'nikita/lib/misc'
